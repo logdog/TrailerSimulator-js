@@ -27,20 +27,19 @@ let TRAILER_WHEEL_BASE = TRAILER_HEIGHT + 10;
 
 
 let wheelAngle = 0;
-let carDir = Victor(0,1).norm();
+let carDir = Victor(Math.random()*2-1, Math.random()*2-1).norm();
 let carPos = Victor(200,250);
 let carVel = 0;
 let carAccel = 0;
 
 let hitchPos = carPos.clone().add(carDir.clone().multiplyScalar(-HITCH_LENGTH));
 
-let trailerDir = Victor(0,1).norm();
+let trailerDir = carDir.clone(); /*Victor(0,1).norm();*/ 
 let trailerPos = hitchPos.clone().add(trailerDir.clone().multiplyScalar(-TRAILER_WHEEL_BASE));
 
 
 function draw() {
     frameRate(30);
-    background(204);
 
     TRAILER_HEIGHT = slider1.value();
     TRAILER_WHEEL_BASE = TRAILER_HEIGHT + 10;
@@ -72,6 +71,7 @@ function draw() {
     textSize(32);
     text(''+carVel, 10, 30);
 
+    drawParkingLot();
     drawCar();
     drawTrailer();
 
@@ -85,15 +85,17 @@ function draw() {
 
 function calcSteering(dt) {
 
-    let frictionForce = carVel * 1.1;
-    let dragForce = carVel * carVel * 0.0004;
+    // let frictionForce = carVel * 1.1;
+    // let dragForce = carVel * carVel * 0.0004;
 
-    let totalAccel = (carAccel * ENGINE_POWER - frictionForce - dragForce);
-    carVel += totalAccel * dt/1000;
+    // let totalAccel = (carAccel * ENGINE_POWER - frictionForce - dragForce);
+    // carVel += totalAccel * dt/1000;
 
-    if (abs(carVel) < 5) {
-        carVel = 0;
-    }
+    // if (abs(carVel) < 5) {
+    //     carVel = 0;
+    // }
+
+    carVel = carAccel * 100;
 
 
     // trailer movements (see diagram)
@@ -117,6 +119,16 @@ function calcSteering(dt) {
 
     // calculate new direction for the car
     carDir = frontWheel.clone().subtract(rearWheel).norm();
+}
+
+function drawParkingLot() {
+    background(204);
+    fill(255);
+
+    for (let x=0; x<800; x+=100) {
+        rect(x,0, 10, 200);
+        rect(x,400, 10, 200);
+    }
 }
 
 function drawCar() {
